@@ -1,16 +1,11 @@
+currentSpeedValue = 1.00;
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize speed value in storage if not set
-    if (chrome.storage.local.get("speed") === undefined) {
-    chrome.storage.local.set({ speed: 1.00 }).then(() => {
-        console.log("Default speed was set");
+    chrome.storage.sync.get(["speed"], (result) => {
+        currentSpeedValue = result.speed ?? 1.00;
+        document.getElementById("currentSpeed").value = currentSpeedValue.toFixed(2);
+        console.log("Initialized speed value:", currentSpeedValue.toFixed(2));
     });
-    currentSpeedValue = 1.00;
-    }
-    else {
-        currentSpeedValue = chrome.storage.local.get("speed");
-    }
-
-    currentSpeed = document.getElementById("currentSpeed");
 
     // Set the current speed value in the input field from user input
     currentSpeed.addEventListener("change", () => {
@@ -19,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSpeed(newValue);
         } 
         else {
-            updateSpeed(chrome.storage.local.get("speed"));
+            updateSpeed(chrome.storage.sync.get(["speed"]));
         }
         currentSpeed.value = newValue;
         console.log("New speed value:", newValue);
@@ -27,15 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to update the speed in storage and UI and apply it to all videos
     function updateSpeed(rate) {
-        console.log("Current speed value:", currentSpeedValue);
-        if (isNaN(currentSpeedValue)) {
-            rate = 1.00;
-        }
-        else if (rate <= 0) {
+        if (rate <= 0) {
+            console.log("Speed value was less than or equal to 0, set to minimum:", rate);
             rate = 0.01;
         }
         currentSpeed.value = parseFloat(rate).toFixed(2);
-        chrome.storage.local.set({ speed: parseFloat(rate).toFixed(2) });
+        chrome.storage.sync.set({ speed: rate });
         document.querySelectorAll("video").forEach(video => {
             video.playbackRate = rate;
         });
@@ -48,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isNaN(currentSpeed.value)) {
             currentSpeedValue = 1.00;
             currentSpeed.value = currentSpeedValue;
-            chrome.storage.local.set({ speed: currentSpeedValue });
+            chrome.storage.sync.set({ speed: currentSpeedValue });
         }
         currentSpeedValue = parseFloat(currentSpeed.value) + val;
         updateSpeed(currentSpeedValue);
