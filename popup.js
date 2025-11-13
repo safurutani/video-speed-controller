@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         currentSpeed.value = parseFloat(rate).toFixed(2);
         chrome.storage.sync.set({ speed: rate });
+        console.log("Updated speed value:", rate);
         document.querySelectorAll("video").forEach(video => {
             video.playbackRate = rate;
         });
