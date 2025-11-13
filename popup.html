@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>Video Speed Controller</title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <body>
+        <h3>Video Speed</h3>
+        
+        <div id="currentSpeedDisplay">
+            <div id="decrementButtons">
+                <button id="decreaseWhole">- 1</button>
+                <button id="decreaseTenths">- 0.1</button>
+
+            </div>
+            <div id="speedInputContainer">
+                <input id="currentSpeed" type="number" value="1.00">
+            </div>
+            <div id="incrementButtons">
+                <button id="increaseTenths">+ 0.1</button>
+                <button id="increaseWhole">+ 1</button>
+            </div>
+        </div>
+        <div id="buttonContainer">
+            <div class="presetIncrements">
+                <button id="0.25x">0.25x</button>
+                <button id="0.5x">0.5x</button>
+                <button id="0.75x">0.75x</button>
+                <button id="1x" class="wholeIncrement">1x</button>
+            </div>
+            <div class="presetIncrements">
+                <button id="1.25x">1.25x</button>
+                <button id="1.5x">1.5x</button>
+                <button id="1.75x">1.75x</button>
+                <button id="2x" class="wholeIncrement">2x</button>
+            </div>
+            <div class="presetIncrements">
+                <button id="2.25x">2.25x</button>
+                <button id="2.5x">2.5x</button>
+                <button id="2.75x">2.75x</button>
+                <button id="3x" class="wholeIncrement">3x</button>
+            </div>
+        </div>
+
+        <script src="popup.js"></script>
+    </body>
+</html>
