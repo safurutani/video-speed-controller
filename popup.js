@@ -1,7 +1,7 @@
 currentSpeedValue = 1.00;
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize speed value in storage if not set
-    chrome.storage.sync.get(["speed"], (result) => {
+    chrome.storage.local.get(["speed"], (result) => {
         currentSpeedValue = result.speed ?? 1.00;
         document.getElementById("currentSpeed").value = currentSpeedValue.toFixed(2);
         console.log("Initialized speed value:", currentSpeedValue.toFixed(2));
@@ -14,11 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSpeed(newValue);
         } 
         else {
-            updateSpeed(chrome.storage.sync.get(["speed"]));
+            updateSpeed(chrome.storage.local.get(["speed"]));
         }
         currentSpeed.value = newValue;
         console.log("New speed value:", newValue);
     });
+
+    
+
 
     // Function to update the speed in storage and UI and apply it to all videos
     function updateSpeed(rate) {
@@ -26,11 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Speed value was less than or equal to 0, set to minimum:", rate);
             rate = 0.01;
         }
-        currentSpeed.value = parseFloat(rate).toFixed(2);
-        chrome.storage.sync.set({ speed: rate });
-        console.log("Updated speed value:", rate);
-        document.querySelectorAll("video").forEach(video => {
-            video.playbackRate = rate;
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, { action: "setSpeed", rate });
+        
         });
 
     }
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isNaN(currentSpeed.value)) {
             currentSpeedValue = 1.00;
             currentSpeed.value = currentSpeedValue;
-            chrome.storage.sync.set({ speed: currentSpeedValue });
+            chrome.storage.local.set({ speed: currentSpeedValue });
         }
         currentSpeedValue = parseFloat(currentSpeed.value) + val;
         updateSpeed(currentSpeedValue);

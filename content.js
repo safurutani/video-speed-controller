@@ -1,17 +1,26 @@
-// script that accesses the web page's context and applies the stored speed to all video elements
-document.addEventListener("DOMContentLoaded", () => {
-    function applyStoredSpeed() {
-    chrome.storage.sync.get(["speed"], (result) => {
-        const rate = result.speed ?? 1.00;
-        document.querySelectorAll("video").forEach(video => {
-        video.playbackRate = rate;
+chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.action === "setSpeed") {
+        document.querySelectorAll("video").forEach(v => {
+            v.playbackRate = msg.rate;
         });
-        console.log("Applied playback rate to videos:", rate);
-    });
     }
-
-    // ensure the website isn't overriding the playback rate
-    setInterval(applyStoredSpeed, 1000);
-
-    applyStoredSpeed();
 });
+
+function applyStoredSpeed(rate) {
+    document.querySelectorAll("video").forEach(v => v.playbackRate = rate);
+}
+
+function loadSpeedAndApply() {
+    storage.get(["speed"], (result) => {
+        const rate = result.speed ?? 1.00;
+        applyStoredSpeed(rate);
+        console.log("Applied rate:", rate);
+    });
+}
+
+// Watch for dynamically-added videos
+const observer = new MutationObserver(() => loadSpeedAndApply());
+observer.observe(document.body, { childList: true, subtree: true });
+
+loadSpeedAndApply();
+setInterval(loadSpeedAndApply, 1000);
