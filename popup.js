@@ -1,11 +1,12 @@
 currentSpeedValue = 1.00;
-document.addEventListener("DOMContentLoaded", () => {
-    // Initialize speed value in storage if not set
+// Initialize speed value in storage if not set
     chrome.storage.local.get(["speed"], (result) => {
         currentSpeedValue = result.speed ?? 1.00;
         document.getElementById("currentSpeed").value = currentSpeedValue.toFixed(2);
         console.log("Initialized speed value:", currentSpeedValue.toFixed(2));
     });
+document.addEventListener("DOMContentLoaded", () => {
+    
 
     // Set the current speed value in the input field from user input
     currentSpeed.addEventListener("change", () => {

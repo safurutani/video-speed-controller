@@ -11,11 +11,16 @@ function applyStoredSpeed(rate) {
 }
 
 function loadSpeedAndApply() {
-    storage.get(["speed"], (result) => {
-        const rate = result.speed ?? 1.00;
-        applyStoredSpeed(rate);
-        console.log("Applied rate:", rate);
-    });
+    try {
+        chrome.storage.local.get(["speed"], (result) => {
+            if (chrome.runtime.lastError) return;
+            const value = result.speed ?? 1;
+            currentSpeed.value = value.toFixed(2);
+        });
+    } catch (e) {
+        console.warn("Popup closed early, ignoring:", e);
+    }
+
 }
 
 // Watch for dynamically-added videos
