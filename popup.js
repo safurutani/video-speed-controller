@@ -1,28 +1,25 @@
 currentSpeedValue = 1.00;
 // Initialize speed value in storage if not set
-    chrome.storage.local.get(["speed"], (result) => {
-        currentSpeedValue = result.speed ?? 1.00;
-        document.getElementById("currentSpeed").value = currentSpeedValue.toFixed(2);
-        console.log("Initialized speed value:", currentSpeedValue.toFixed(2));
-    });
-document.addEventListener("DOMContentLoaded", () => {
-    
+chrome.storage.local.get(["speed"], (result) => {
+    currentSpeedValue = result.speed ?? 1.00;
+    document.getElementById("currentSpeed").value = currentSpeedValue.toFixed(2);
+    console.log("Initialized speed value:", currentSpeedValue.toFixed(2));
+});
 
+
+document.addEventListener("DOMContentLoaded", () => {
     // Set the current speed value in the input field from user input
     currentSpeed.addEventListener("change", () => {
-        const newValue = parseFloat(currentSpeed.value).toFixed(2);
-        if (!isNaN(newValue) && newValue >= 0.01) {
-            updateSpeed(newValue);
+        const rate = parseFloat(currentSpeed.value).toFixed(2);
+        if (!isNaN(rate) && rate >= 0.01) {
+            updateSpeed(rate);
         } 
         else {
             updateSpeed(chrome.storage.local.get(["speed"]));
         }
-        currentSpeed.value = newValue;
-        console.log("New speed value:", newValue);
+        currentSpeed.value = rate;
+        console.log("New speed value:", rate);
     });
-
-    
-
 
     // Function to update the speed in storage and UI and apply it to all videos
     function updateSpeed(rate) {
@@ -30,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Speed value was less than or equal to 0, set to minimum:", rate);
             rate = 0.01;
         }
+        document.getElementById("currentSpeed").value = parseFloat(rate).toFixed(2);
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, { action: "setSpeed", rate });
         
